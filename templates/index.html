@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="/static/style.css">
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+
+<body>
+
+<div class="container">
+<h1>💰 Expense Tracker</h1>
+
+<form method="POST" class="form">
+<input name="amount" placeholder="Amount" required>
+
+<select name="category">
+<option>Food</option>
+<option>Travel</option>
+<option>Shopping</option>
+<option>Bills</option>
+</select>
+
+<select name="currency">
+<option value="INR">INR</option>
+<option value="USD">USD</option>
+<option value="EUR">EUR</option>
+<option value="GBP">GBP</option>
+<option value="JPY">JPY</option>
+</select>
+
+<button>Add</button>
+</form>
+
+<div class="total-box">
+<select id="totalCurrency" onchange="changeCurrency()">
+<option value="INR">INR</option>
+<option value="USD">USD</option>
+<option value="EUR">EUR</option>
+</select>
+
+<h2 id="totalDisplay"></h2>
+</div>
+
+<div class="list">
+{% for e in expenses %}
+<div class="card">
+<span>{{ e[4] }} {{ e[2] }} - {{ e[3] }}</span>
+<a href="/delete/{{ e[0] }}">❌</a>
+</div>
+{% endfor %}
+</div>
+
+<div class="charts">
+<canvas id="pieChart"></canvas>
+<canvas id="barChart"></canvas>
+</div>
+
+</div>
+
+<script>
+const rates = {{ rates | tojson }};
+let baseTotal = {{ total }};
+
+// 🔥 smooth animation
+function animate(start, end) {
+    let startTime = null;
+
+    function step(time) {
+        if (!startTime) startTime = time;
+        let progress = Math.min((time - startTime)/800,1);
+        let val = start + (end-start)*progress;
+
+        document.getElementById("totalDisplay").innerText =
+            "Total: " + val.toFixed(2);
+
+        if (progress<1) requestAnimationFrame(step);
+    }
+    requestAnimationFrame(step);
+}
+
+// 💱 change currency
+function changeCurrency(){
+    let c = document.getElementById("totalCurrency").value;
+    let val = (c=="INR") ? baseTotal : baseTotal * rates[c];
+
+    animate(0,val);
+
+    setTimeout(()=>{
+        document.getElementById("totalDisplay").innerText =
+        "Total: "+c+" "+val.toFixed(2);
+    },800);
+}
+
+changeCurrency();
+
+// 📊 charts
+const data = {{ category_data | tojson }};
+const labels = Object.keys(data);
+const values = Object.values(data);
+
+new Chart(document.getElementById("pieChart"), {
+type:"pie",
+data:{labels:labels,datasets:[{data:values}]}
+});
+
+new Chart(document.getElementById("barChart"), {
+type:"bar",
+data:{labels:labels,datasets:[{data:values}]}
+});
+</script>
+
+</body>
+</html>
