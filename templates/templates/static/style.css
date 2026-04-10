@@ -1,0 +1,36 @@
+body{
+font-family:Poppins;
+background:linear-gradient(135deg,#667eea,#764ba2);
+color:white;
+text-align:center;
+}
+
+.container{max-width:700px;margin:auto;padding:20px;}
+
+.form{display:flex;gap:10px;flex-wrap:wrap;justify-content:center;}
+
+input,select,button{padding:10px;border-radius:8px;border:none;}
+
+button{background:#00c9a7;color:white;}
+
+.total-box{margin:20px;padding:15px;background:rgba(255,255,255,0.1);border-radius:10px;}
+
+.card{
+background:white;color:black;margin:10px;padding:10px;border-radius:10px;
+animation:fade 0.5s;
+}
+
+@keyframes fade{
+from{opacity:0;transform:translateY(20px);}
+to{opacity:1;}
+}
+
+.charts{display:flex;gap:20px;flex-wrap:wrap;justify-content:center;}
+
+canvas{width:300px!important;background:white;border-radius:10px;padding:10px;}
+
+@media(max-width:600px){
+.form{flex-direction:column;}
+input,select,button{width:100%;}
+canvas{width:100%!important;}
+}
